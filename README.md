@@ -1,10 +1,10 @@
-#AWS Infrastructure Setup Documentation
+# AWS Infrastructure Setup Documentation
 
 ## Table of Contents
 1. [Overview](#overview)
 2. [Prerequisites](#prerequisites)
 3. [Variables](#variables)
-4. [Resources Created](#Resources Created)
+4. [Resources Created](#ResourcesCreated)
 5. [Usage](#usage)
 6. [Cleanup](#cleanup)
 
@@ -128,5 +128,3 @@ To remove all the created resources, run:
 	terraform destroy
 	```
 
-
-# Terraform---AWS-ECS-Fargate
