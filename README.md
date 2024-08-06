@@ -30,6 +30,50 @@ The following variables must be defined in a `variables.tf` file or passed durin
 - `ami_id`: The ID of the Amazon Machine Image (AMI) to use.
 - `instance_type`: The type of EC2 instance to create (e.g., `t2.micro`).
 
+## Terraform Configuration
+
+The main Terraform configuration is located in the `main.tf` file, which includes:
+- A provider block for AWS.
+- A security group that allows SSH (port 22) and HTTP (port 80) traffic.
+- An EC2 instance resource configured with user data to install and run NGINX.
+
+## Usage
+
+To deploy the EC2 instance, follow these steps:
+
+1. **Clone the Repository**:
+
+    ```bash
+    git clone https://github.com/Mashhood03344/Terraform-AWS-EC2-Instance-with-NGINX.git
+    cd your-repo-name
+    ```
+
+2. **Initialize Terraform**:
+
+    ```bash
+    terraform init
+    ```
+
+4. **Validate the Configuration**:
+    ```bash
+    terraform validate
+    ```
+
+5. **Plan the Deployment**:
+
+    ```bash
+    terraform plan
+    ```
+
+6. **Apply the Configuration**:
+7. 
+    ```bash
+    terraform apply
+    ```
+    
+   Confirm the changes by typing `yes` when prompted.
+   
+
 ## Configuration for Custom Website
 
 To host your custom website, place your `index.html` file at the location `/var/www/html`. Below is an example of a simple HTML file:
@@ -78,50 +122,6 @@ After creating the symlink, reload NGINX to apply the changes:
 ```bash
 sudo systemctl reload nginx
 ```
-
-## Terraform Configuration
-
-The main Terraform configuration is located in the `main.tf` file, which includes:
-- A provider block for AWS.
-- A security group that allows SSH (port 22) and HTTP (port 80) traffic.
-- An EC2 instance resource configured with user data to install and run NGINX.
-
-## Usage
-
-To deploy the EC2 instance, follow these steps:
-
-1. **Clone the Repository**:
-
-    ```bash
-    git clone https://github.com/yourusername/your-repo-name.git
-    cd your-repo-name
-    ```
-
-2. **Initialize Terraform**:
-
-    ```bash
-    terraform init
-    ```
-
-4. **Validate the Configuration**:
-    ```bash
-    terraform validate
-    ```
-
-5. **Plan the Deployment**:
-
-    ```bash
-    terraform plan
-    ```
-
-6. **Apply the Configuration**:
-7. 
-    ```bash
-    terraform apply
-    ```
-    
-   Confirm the changes by typing `yes` when prompted.
-
 
 ## Accessing the NGINX Server
 
