@@ -4,7 +4,7 @@
 1. [Overview](#overview)
 2. [Prerequisites](#prerequisites)
 3. [Variables](#variables)
-4. [Resources Created](#ResourcesCreated)
+4. [Resources Created](#Resources-Created)
 5. [Usage](#usage)
 6. [Cleanup](#cleanup)
 
@@ -124,7 +124,4 @@ A configured variables.tf file containing values for the following variables:
 
 To remove all the created resources, run:
 
-	```bash
 	terraform destroy
-	```
-
