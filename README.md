@@ -65,19 +65,16 @@ server {
     }
 }
 
+...
 
-Create a Symlink for NGINX Configuration
+## Create a Symlink for NGINX Configuration
 To enable your new site configuration, create a symlink between the sites-available and sites-enabled directories with the following command:
 
-bash
-Copy code
 sudo ln -s /etc/nginx/sites-available/website.conf /etc/nginx/sites-enabled/
+
 After creating the symlink, reload NGINX to apply the changes:
 
-bash
-Copy code
 sudo systemctl reload nginx
-
 
 ## Terraform Configuration
 
@@ -91,56 +88,51 @@ The main Terraform configuration is located in the `main.tf` file, which include
 To deploy the EC2 instance, follow these steps:
 
 1. **Clone the Repository**:
-    ```bash
+
+    ...
     git clone https://github.com/yourusername/your-repo-name.git
     cd your-repo-name
     ```
 
 2. **Initialize Terraform**:
-    ```bash
+    ```
     terraform init
     ```
 
 3. **Validate the Configuration**:
-    ```bash
+    ```
     terraform validate
     ```
 
 4. **Plan the Deployment**:
-    ```bash
+    ```
     terraform plan
     ```
 
 5. **Apply the Configuration**:
-    ```bash
+    ```
     terraform apply
     ```
    Confirm the changes by typing `yes` when prompted.
 
+...
+
+
 ## Accessing the NGINX Server
 
 Once the instance is running, access the NGINX web server by navigating to the public IP address of the instance in a web browser:
-http://<instance-public-ip>
 
-php
-Copy code
+...
+http://<instance-public-ip>
+...
+
 You should see a "Hello World" message displayed.
 
-Cleanup
+...
+
+## Cleanup
 To destroy the resources created by Terraform, run:
 
-bash
-Copy code
+...
 terraform destroy
 Confirm the destruction by typing yes when prompted.
-
-
-
-
-
-
-
-
-
-
-# Terraform-AWS-EC2-Instance-with-NGINX
