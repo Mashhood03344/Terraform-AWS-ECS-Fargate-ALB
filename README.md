@@ -1,144 +1,132 @@
-# Terraform AWS EC2 Instance with NGINX
+#AWS Infrastructure Setup Documentation
 
 ## Table of Contents
 1. [Overview](#overview)
 2. [Prerequisites](#prerequisites)
 3. [Variables](#variables)
-4. [Terraform Configuration](#terraform-configuration)
+4. [Resources Created](#Resources Created)
 5. [Usage](#usage)
-6. [Accessing the NGINX Server](#accessing-the-nginx-server)
-7. [Configuration for Custom Website](#configuration-for-custom-website)
-8. [Create a Symlink for NGINX Configuration](#create-a-symlink-for-nginx-configuration)
-9. [Cleanup](#cleanup)
-10. [License](#license)
+6. [Cleanup](#cleanup)
 
 ## Overview
 
-This documentation provides instructions for provisioning an AWS EC2 instance using Terraform. The instance will run an NGINX web server and allow HTTP and SSH traffic.
+This Terraform configuration defines an AWS infrastructure setup that includes a Virtual Private Cloud (VPC), subnets, security groups, an ECS (Elastic Container Service) cluster, a Fargate task definition,  					and an ECS service This setup enables hosting a html web page on AWS.
 
 ## Prerequisites
+ - Terraform installed on your local machine.
+ - An AWS account with appropriate permissions to create the specified resources.
 
-Before using this Terraform configuration, ensure you have the following:
-- Terraform installed on your local machine.
-- An AWS account with permissions to create EC2 instances and security groups.
-- AWS CLI configured with a profile that has access to your AWS account.
-- An existing key pair in the specified AWS region for SSH access (replace `deployer-key` with your key pair name).
 
 ## Variables
 
-The following variables must be defined in a `variables.tf` file or passed during execution:
-- `ami_id`: The ID of the Amazon Machine Image (AMI) to use.
-- `instance_type`: The type of EC2 instance to create (e.g., `t2.micro`).
+A configured variables.tf file containing values for the following variables:
+- vpc_cidr: The CIDR block for the VPC.
+- public_subnet_cidr: The CIDR block for the public subnet.
+- private_subnet_cidr: The CIDR block for the private subnet.
+- aws_region: The AWS region where the resources will be created.
+- cluster_name: The name of the ECS cluster.
+- task_definition_family: The family name for the ECS task definition.
+- service_name: The name of the ECS service.
 
-## Terraform Configuration
 
-The main Terraform configuration is located in the `main.tf` file, which includes:
-- A provider block for AWS.
-- A security group that allows SSH (port 22) and HTTP (port 80) traffic.
-- An EC2 instance resource configured with user data to install and run NGINX.
+## Resources Created
 
+1. **VPC**:
+
+ - Resource Type: aws_vpc
+ - Description: Creates a VPC to host the resources.
+
+2. **Internet Gateway**:
+
+ - Resource Type: aws_internet_gateway
+ - Description: Creates an internet gateway to provide internet access to the VPC.
+
+3. **Route Table**:
+
+ - Resource Type: aws_route_table
+ - Description: Creates a route table to direct traffic from the VPC to the internet via the internet gateway.
+ - Route: Allows outbound traffic to all IP addresses (0.0.0.0/0).
+ 
+4. **Route Table Association**:
+
+ - Resource Type: aws_route_table_association
+ - Description: Associates the public route table with the public subnet.
+
+5. **Public Subnet**:
+
+ - Resource Type: aws_subnet
+ - Description: Creates a public subnet within the VPC.
+ - Properties: Automatically assigns public IPs to instances launched in this subnet.
+ 
+6. **Private Subnet**:
+
+ - Resource Type: aws_subnet
+ - Description: Creates a private subnet within the VPC.
+
+7. **Security Group**:
+
+ - Resource Type: aws_security_group
+ - Description: Creates a security group that allows inbound HTTP traffic (port 80) and all outbound traffic.
+
+9. **ECS Cluster**:
+
+ - Resource Type: aws_ecs_cluster
+ - Description: Creates an ECS cluster for managing containerized applications.
+ 
+10. **ECS Task Definition**:
+
+ - Resource Type: aws_ecs_task_definition
+ - Description: Defines a Fargate task with specific container configurations.
+ - Properties:
+ 
+	- Family: Defined by the variable task_definition_family.
+	- Network Mode: awsvpc.
+	- CPU: 256 units.
+	- Memory: 512 MiB.
+	- Container Definition: Defines a single container running an HTTP server with a sample HTML page.
+
+11. **ECS Service**:
+	
+ - Resource Type: aws_ecs_service
+ - Description: Creates a service for the Fargate task definition.
+ - Properties:
+ 	- Desired Count: 1 (indicates one task should be running).
+	- Launch Type: FARGATE.
+	- Network Configuration: Uses the public subnet and the defined security group. Assigns public IPs to the tasks.
 ## Usage
 
-To deploy the EC2 instance, follow these steps:
+1. **Clone the Repository: Clone the repository containing the Terraform configuration.**
+2. **Navigate to the Directory: Open your terminal and navigate to the directory containing the Terraform files.**
+3. **Initialize Terraform: Run the command:**
+	
+ 	```bash
+ 	terraform init
+ 	```
+ 	
+4. **Plan the Deployment: Check what resources will be created by running:**
+	```bash
+	terraform plan
+	```
+	
+5. **Apply the Configuration: Deploy the infrastructure by running:**
+	```bash
+	terraform apply
+	```
+	
+6. **Verify Resources: Once applied, verify the created resources in the AWS Management Console.**
 
-1. **Clone the Repository**:
+	Notes
 
-    ```bash
-    git clone https://github.com/Mashhood03344/Terraform-AWS-EC2-Instance-with-NGINX.git
-    cd your-repo-name
-    ```
-
-2. **Initialize Terraform**:
-
-    ```bash
-    terraform init
-    ```
-
-4. **Validate the Configuration**:
-    ```bash
-    terraform validate
-    ```
-
-5. **Plan the Deployment**:
-
-    ```bash
-    terraform plan
-    ```
-
-6. **Apply the Configuration**:
-7. 
-    ```bash
-    terraform apply
-    ```
-    
-   Confirm the changes by typing `yes` when prompted.
-   
-
-## Configuration for Custom Website
-
-To host your custom website, place your `index.html` file at the location `/var/www/html`. Below is an example of a simple HTML file:
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
-</head>
-<body>
-    <h1>Hello World</h1>
-</body>
-</html>
-```
-
-Additionally, you can create a configuration file for your website. Create a file named website.conf in the location /etc/nginx/sites-available with the following configuration:
-
-```nginx
-server {
-    listen 80;
-    listen [::]:80;
-
-    root /var/www/html;
-    index index.html;
-
-    server_name _;
-
-    location / {
-        try_files $uri $uri/ =404;
-    }
-}
-```
-
-## Create a Symlink for NGINX Configuration
-To enable your new site configuration, create a symlink between the sites-available and sites-enabled directories with the following command:
-
-```bash
-sudo ln -s /etc/nginx/sites-available/website.conf /etc/nginx/sites-enabled/
-```
-
-After creating the symlink, reload NGINX to apply the changes:
-
-```bash
-sudo systemctl reload nginx
-```
-
-## Accessing the NGINX Server
-
-Once the instance is running, access the NGINX web server by navigating to the public IP address of the instance in a web browser:
-
-```bash
-http://<instance-public-ip>
-```
-
-You should see a "Hello World" message displayed.
-
+	- Ensure your AWS credentials are configured properly for Terraform to authenticate and create resources in your account.
+	- Review and update the security group rules as needed based on your application requirements.
 
 ## Cleanup
-To destroy the resources created by Terraform, run:
 
-```bash
-terraform destroy
-```
+To remove all the created resources, run:
 
-Confirm the destruction by typing yes when prompted.
+	```bash
+	terraform destroy
+	```
+
+
+# Terraform---AWS-ECS-Fargate
