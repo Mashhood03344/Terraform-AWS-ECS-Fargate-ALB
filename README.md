@@ -46,11 +46,11 @@ To host your custom website, place your `index.html` file at the location `/var/
     <h1>Hello World</h1>
 </body>
 </html>
+```
+
 Additionally, you can create a configuration file for your website. Create a file named website.conf in the location /etc/nginx/sites-available with the following configuration:
 
-nginx
-Copy code
-
+```nginx
 server {
     listen 80;
     listen [::]:80;
@@ -64,17 +64,20 @@ server {
         try_files $uri $uri/ =404;
     }
 }
-
-...
+```
 
 ## Create a Symlink for NGINX Configuration
 To enable your new site configuration, create a symlink between the sites-available and sites-enabled directories with the following command:
 
+```bash
 sudo ln -s /etc/nginx/sites-available/website.conf /etc/nginx/sites-enabled/
+```
 
 After creating the symlink, reload NGINX to apply the changes:
 
+```bash
 sudo systemctl reload nginx
+```
 
 ## Terraform Configuration
 
@@ -89,50 +92,53 @@ To deploy the EC2 instance, follow these steps:
 
 1. **Clone the Repository**:
 
-    ...
+    ```bash
     git clone https://github.com/yourusername/your-repo-name.git
     cd your-repo-name
     ```
 
 2. **Initialize Terraform**:
-    ```
+
+    ```bash
     terraform init
     ```
 
-3. **Validate the Configuration**:
-    ```
+4. **Validate the Configuration**:
+    ```bash
     terraform validate
     ```
 
-4. **Plan the Deployment**:
-    ```
+5. **Plan the Deployment**:
+
+    ```bash
     terraform plan
     ```
 
-5. **Apply the Configuration**:
-    ```
+6. **Apply the Configuration**:
+7. 
+    ```bash
     terraform apply
     ```
+    
    Confirm the changes by typing `yes` when prompted.
-
-...
 
 
 ## Accessing the NGINX Server
 
 Once the instance is running, access the NGINX web server by navigating to the public IP address of the instance in a web browser:
 
-...
+```bash
 http://<instance-public-ip>
-...
+```
 
 You should see a "Hello World" message displayed.
 
-...
 
 ## Cleanup
 To destroy the resources created by Terraform, run:
 
-...
+```bash
 terraform destroy
+```
+
 Confirm the destruction by typing yes when prompted.
